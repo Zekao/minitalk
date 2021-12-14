@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: emaugale <emaugale@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/07/26 20:40:06 by emaugale          #+#    #+#              #
-#    Updated: 2021/12/09 19:47:31 by emaugale         ###   ########.fr        #
+#    Created: 2021/12/14 03:21:58 by emaugale          #+#    #+#              #
+#    Updated: 2021/12/14 03:21:58 by emaugale         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,12 +14,10 @@ NAME1 = client
 NAME2 = server
 
 SRCS1 =	client_folder/client.c			\
-		libft/libft_utils.c				\
-		client_folder/utils_client.c	\
+		utils/utils.c					\
 
-SRCS2 =	server_folder/server_utils.c			\
-		libft/libft_utils.c						\
-		server_folder/server.c 					\
+SRCS2 =	server_folder/server.c			\
+		utils/utils.c					\
 
 BONUS = 
 

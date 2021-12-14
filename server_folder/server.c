@@ -5,63 +5,43 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: emaugale <emaugale@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/13 04:48:52 by emaugale          #+#    #+#             */
-/*   Updated: 2021/12/13 05:29:33 by emaugale         ###   ########.fr       */
+/*   Created: 2021/12/14 03:07:59 by emaugale          #+#    #+#             */
+/*   Updated: 2021/12/14 17:57:50 by emaugale         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_talk.h"
-#include <sys/signal.h>
+#include "minitalk.h"
 
-
-
-void	handler_sigusr(int sigusr, siginfo_t *info, void *context)
+static void	get_message(int signum)
 {
-	static char	c = 0xFF;
-	static int	bits = 0;
-	static int	pid = 0;
-	static char	*msg = 0;
-
-	(void)context;
-	if (info->si_pid)
-		pid = info->si_pid;
-	if (sigusr == SIGUSR1)
-		c ^= 0x80 >> bits;
-	else if (sigusr == SIGUSR2)
-		c |= 0x80 >> bits;
-	if (++bits == 8)
+	static  char chr = 0x00;
+	static int	size = 7;
+	
+	if (signum == SIGUSR1)
 	{
-		if (c)
-		{
-			msg = ft_straddchar(msg, c);
-			printf("debug : %s\n", msg);
-		}
-		else
-			msg = ft_print(msg);
-		bits = 0;
-		c = 0xFF;
+		chr += (1 << size);
+		size--;
 	}
-	if (kill(pid, SIGUSR1) == -1)
-		ft_error_server(pid, msg);
+	else if (signum == SIGUSR2)
+		size--;
+	if (size < 0)
+	{
+		ft_putchar_fd(chr, 1);
+		if (!chr)
+			ft_putchar_fd('\n', 1);
+		chr = 0x00;
+		size = 7;
+	}
 }
 
 int	main(void)
 {
-	struct sigaction sa;
-	// sigset_t	block_mask;
-
-	// sigemptyset(&block_mask);
-	// sigaddset(&block_mask, SIGINT);
-	// sigaddset(&block_mask, SIGQUIT);
-	sa.sa_handler = 0;
-	sa.sa_flags = SA_SIGINFO;
-	// sa.sa_mask = block_mask;
-	sa.sa_sigaction = handler_sigusr;
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
-	ft_putstr_fd("PID : ", 1);
+	ft_putstr_fd("PID: ", 1);
 	ft_putnbr_fd(getpid(), 1);
 	ft_putstr_fd("\n", 1);
+	signal(SIGUSR1, get_message);
+	signal(SIGUSR2, get_message);
 	while (1)
 		pause();
+	return (0);
 }
